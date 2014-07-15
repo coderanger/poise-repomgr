@@ -1,4 +1,4 @@
-cffi
+hg+https://bitbucket.org/coderanger/cffi#egg=cffi
 Twisted==14.0.0
 klein==0.2.3
 treq==0.2.1
