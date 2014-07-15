@@ -1,0 +1,7 @@
+Twisted==14.0.0
+klein==0.2.3
+treq==0.2.1
+pyOpenSSL==0.14
+service-identity==1.0.0
+characteristic==0.1.0
+depot
