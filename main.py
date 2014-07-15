@@ -147,11 +147,20 @@ class RepoMgr(object):
 
     def _start_cron(self):
         # Start up looping task every N seconds
+        print('Scheduling loopingCalls')
         self._cron_task = task.LoopingCall(self._cron)
         self._cron_task.start(300)
 
+        self._ping_task = task.LoopingCall(self._ping_self)
+        self._ping_task.start(300)
+
     def _cron(self):
         self._fetch_releases('client')
+        # TODO chef-server
+
+    def _ping_self(self):
+        # So that Heroku doesn't shut us down
+        return treq.get('http://poise-repomgr.herokuapp.com/')
 
     def _fetch_releases(self, flavor):
         d = treq.get(RELEASES_URI.format(flavor))
