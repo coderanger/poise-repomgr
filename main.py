@@ -217,4 +217,4 @@ repo_mgr = RepoMgr()
 resource = repo_mgr.app.resource
 
 if __name__ == '__main__':
-    repo_mgr.app.run('localhost', os.environ.get('PORT', 8000))
+    repo_mgr.app.run('localhost', int(os.environ.get('PORT', 8000)))
