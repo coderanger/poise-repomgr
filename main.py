@@ -26,7 +26,7 @@ from depot.apt import AptPackages, AptRepository
 from depot.gpg import GPG
 from depot.storage import StorageWrapper
 from twisted import python
-from twisted.internet import defer, task, threads
+from twisted.internet import defer, task, threads, reactor
 from klein import Klein
 
 RELEASES_URI = 'https://www.getchef.com/chef/full_{}_list'
@@ -137,14 +137,18 @@ class RepoMgr(object):
         self._releases = set()
         self._queue = WorkerQueue(self._sync_release)
 
-        # Start up looping task every N seconds
-        self._cron_task = task.LoopingCall(self._cron)
-        self._cron_task.start(1000)
+        # Give things 60 seconds to stabilize before re start crawling
+        reactor.callLater(60, self._start_cron)
 
     @app.route('/')
     def items(self, request):
         request.setHeader('Content-Type', 'application/json')
         return json.dumps({'releases': sorted(self._releases), 'queue': self._queue.tasks()}, cls=JSONEncoder, sort_keys=True)
+
+    def _start_cron(self):
+        # Start up looping task every N seconds
+        self._cron_task = task.LoopingCall(self._cron)
+        self._cron_task.start(300)
 
     def _cron(self):
         self._fetch_releases('client')
