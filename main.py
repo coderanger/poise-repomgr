@@ -129,10 +129,9 @@ class RepoMgr(object):
         self._storage_uri = os.environ.get('STORAGE_URI', 'local://')
         self._storage = StorageWrapper(self._storage_uri)
         # If $SIGNING_KEY is set, we are running on Heroku so import it to ./
-        self._gpg = GPG(os.environ.get('SIGNING_KEY_ID'), home='.' if 'SIGNING_KEY' in os.environ else None)
-        if 'SIGNING_KEY' in os.environ:
-            results = self._gpg.import_keys(os.environ['SIGNING_KEY'])
-            self._gpg.keyid = results.fingerprints[0]
+        self._gpg = GPG(os.environ.get('SIGNING_KEY_ID'),
+                        key=os.environ.get('SIGNING_KEY'),
+                        home='.' if 'SIGNING_KEY' in os.environ else None)
 
         # State data
         self._releases = set()
